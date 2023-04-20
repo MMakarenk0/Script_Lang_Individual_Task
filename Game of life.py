@@ -186,7 +186,7 @@ while working:
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            pygame.time.delay(150)
+            pygame.time.delay(100)
             running = False
         elif keys[pygame.K_c]:
             pygame.time.delay(150)
