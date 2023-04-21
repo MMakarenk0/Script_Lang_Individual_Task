@@ -148,13 +148,13 @@ while working:
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             preparing = False
         elif keys[pygame.K_c]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             cell.killAll(cell_list)
         elif keys[pygame.K_v]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             cell.saveAll(cell_list)
 
 
@@ -186,19 +186,19 @@ while working:
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            pygame.time.delay(100)
+            pygame.time.delay(300)
             running = False
         elif keys[pygame.K_c]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             cell.killAll(cell_list)
         elif keys[pygame.K_v]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             cell.saveAll(cell_list)
         elif keys[pygame.K_EQUALS]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             delay -= 100
         elif keys[pygame.K_MINUS]:
-            pygame.time.delay(150)
+            pygame.time.delay(300)
             delay += 100
         pygame.time.delay(delay)               
             
