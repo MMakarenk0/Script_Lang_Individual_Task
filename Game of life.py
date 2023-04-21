@@ -10,13 +10,13 @@ class Cell():
         self.row = index//(screen_width // (cell_width + 1))
         self.col = index - (index//(screen_width // (cell_width + 1)))*(screen_width // (cell_width + 1))
     
-    def prepare(self, x, y):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        self.rect.topleft = (x, y)
+    def prepare(self, x, y):               # A method for drawing cells and their activation using a mouse.
+        mouse = pygame.mouse.get_pos()     # Creating an invisible square and mouse coordinates
+        click = pygame.mouse.get_pressed() # to track their intersections  
+        self.rect.topleft = (x, y)         
 
 
-        if self.status == True:
+        if self.status == True:            # Rendering active cells                                           
             if self.rect.collidepoint(mouse):
                 pygame.draw.rect(screen, (255, 128, 128), (x, y, self.width, self.height))
                 if click[0] == 1:
@@ -25,7 +25,7 @@ class Cell():
             else:
                 pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
 
-        else:
+        else:                              # Rendering not active cells
             if self.rect.collidepoint(mouse):
                 pygame.draw.rect(screen, (163, 163, 163), (x, y, self.width, self.height))
                 if click[0] == 1:
@@ -35,7 +35,7 @@ class Cell():
                 pygame.draw.rect(screen, (255, 255, 255), (x, y, self.width, self.height))
 
 
-    def draw(self, x, y, cell_list):
+    def draw(self, x, y, cell_list):       # A method for rendering cells and their "life". 
 
         if self.status == True:
             pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
@@ -45,8 +45,8 @@ class Cell():
                     if row >= 0 and col >= 0 and row < len(cell_list) // (screen_width // (cell_width + 1)) and col < (screen_width // (cell_width + 1)):
                         if cell_list[row*(screen_width // (cell_width + 1)) + col].status == True:
                             activeNumber += 1
-            if activeNumber < 3 or activeNumber > 4:
-                markedCells.append(self)
+            if activeNumber < 3 or activeNumber > 4:  # Pay attention, that we kill/regenerate 
+                markedCells.append(self)              # cells only after the cycle is fully complete!
         else:
             pygame.draw.rect(screen, (255, 255, 255), (x, y, self.width, self.height))
             activeNumber = 0
@@ -59,16 +59,16 @@ class Cell():
                 markedCells.append(self)
 
             
-    def cellInversion(self, markedCells):
+    def cellInversion(self, markedCells):  # Inversion of marked cells.
         for cell in markedCells:
             cell.status = not(cell.status)
         markedCells.clear()
 
-    def killAll(self, cell_list):
+    def killAll(self, cell_list):          # Clean the whole field.
         for cell in cell_list:
             cell.status = False
 
-    def saveAll(self, cell_list):
+    def saveAll(self, cell_list):          # Fill the whole field.
         for cell in cell_list:
             cell.status = True
 
@@ -126,17 +126,17 @@ cell_list = []
 index = 0
 delay = 300
 
-for y in range(0, screen_height, cell_height+1):
+for y in range(0, screen_height, cell_height+1):            # Filling the whole screen with dead cells.
     for x in range(0, screen_width, cell_width+1):
         cell = Cell(False, cell_width, cell_height, index)
         cell_list.append(cell)
         index += 1
 
 
-working = True
+working = True      
 while working:
     preparing = True
-    while preparing:
+    while preparing:                   # Cycle for cell activation.
         screen.blit(bg, (0, 0))
 
         
@@ -172,7 +172,7 @@ while working:
 
 
     running = True
-    while running:
+    while running:                     # Cycle for starting game.
 
         screen.blit(bg, (0, 0))
 
