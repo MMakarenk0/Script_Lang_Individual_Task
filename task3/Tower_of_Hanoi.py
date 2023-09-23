@@ -1,11 +1,11 @@
 from Tower import *
-
+from pygame.locals import *
 
 pygame.init()
 
 clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((screen_width, screen_height), RESIZABLE | NOFRAME)
 pygame.display.set_caption("Tower of Hanoi")
 
 stepCounter = 0
@@ -27,7 +27,6 @@ for disk in disks:
 
 prevDiskNumber = Disk.diskNumber
 sortedMoves = []
-
 running = True
 while running:
     screen.fill(BLACK)
