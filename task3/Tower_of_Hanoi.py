@@ -62,6 +62,7 @@ while running:
     
     screen.blit(font.render(f"Step: {stepCounter}", True, YELLOW), (half_width-25, screen_height-100))
     screen.blit(font.render("Press R to reset", True, YELLOW), (25, screen_height-100))
+    screen.blit(font.render("Press F to auto-mode", True, YELLOW), (25, screen_height-200))
     Disk.drawDiskButtons(screen)
     screen.blit(font.render(f"Disk quantity: {Disk.diskNumber}", True, YELLOW), (screen_width-280, screen_height-100))
     Disk.drawDelayButtons(screen)
