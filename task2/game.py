@@ -323,10 +323,13 @@ class Game:
             
 
             if self.exit:
+                forthPart = screen_width//4
                 self.plane.draw(self.canvas.get_canvas())
-                if self.plane.x > 272 and self.plane.x < 496:
-                    quit_event = pygame.event.Event(pygame.QUIT)
-                    pygame.event.post(quit_event)
+                for tower in self.towers:
+                    if tower.availableDisks:
+                        if self.plane.x > (forthPart*(tower.index)-112) and self.plane.x < (forthPart*(tower.index)+112):
+                            quit_event = pygame.event.Event(pygame.QUIT)
+                            pygame.event.post(quit_event)
                     
                 self.plane.move()
         
