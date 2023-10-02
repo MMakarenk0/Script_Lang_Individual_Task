@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from exit import Plane
 import random
 from pygame.locals import *
 
@@ -11,7 +12,7 @@ class Disk:
     prev_click = False
     def __init__(self, tower, index):
         self.index = index
-        self.color = (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
+        self.color = (random.randint(25, 255), random.randint(25, 255), random.randint(25, 255))
         self.tower = tower
     
     def setTower(self, newTower):
@@ -25,7 +26,7 @@ class Disk:
     
     def drawDiskButtons(screen):
         mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()  
+        click = pygame.mouse.get_pressed()      
         xm, ym = mouse 
         
         if xm > 1465 and xm < 1491 and ym > 750 and ym < 770:
@@ -162,42 +163,21 @@ class Tower:
                 else:
                     originTower = disks[self.holding_disk_index].getTower()
                     self.isHolding = False
-                    if xm > (forthPart*(1)-112) and xm < (forthPart*(1)+112) and ym > half_height-200 and ym < half_height:
+
+                    # Checking collisions with all towers and saving all moves.
+                    for tower_index, tower in enumerate(towers):
+                        if xm > (forthPart*(tower_index+1)-112) and xm < (forthPart*(tower_index+1)+112) and ym > half_height-200 and ym < half_height:
                         
-                        if towers[0].getDiskList() and towers[0].getTopDisk().getIndex() < self.holding_disk_index:
-                            
-                            addList.append([1, self.holding_disk_index])
-                            delList.append(originTower.index)
-                            originTower.availableDisks[-1].tower = towers[0]
+                            if tower.getDiskList() and tower.getTopDisk().getIndex() < self.holding_disk_index:
+                                
+                                addList.append([tower_index+1, self.holding_disk_index])
+                                delList.append(originTower.index)
+                                originTower.availableDisks[-1].tower = tower
 
-                        elif not towers[0].getDiskList():
-                            addList.append([1, self.holding_disk_index])
-                            delList.append(originTower.index)
-                            originTower.availableDisks[-1].tower = towers[0]
-
-
-                    elif xm > forthPart*(2)-112 and xm < forthPart*(2)+112 and ym > half_height-200 and ym < half_height:
-
-                        if towers[1].getDiskList() and towers[1].getTopDisk().getIndex() < self.holding_disk_index:
-                            
-                            addList.append([2, self.holding_disk_index])
-                            delList.append(originTower.index)
-                            originTower.availableDisks[-1].tower = towers[1]
-                        elif not towers[1].getDiskList():
-                            addList.append([2, self.holding_disk_index])
-                            delList.append(originTower.index)
-                            originTower.availableDisks[-1].tower = towers[1]
-                    elif xm > forthPart*(3)-112 and xm < forthPart*(3)+112 and ym > half_height-200 and ym < half_height:
-
-                        if towers[2].getDiskList() and towers[2].getTopDisk().getIndex() < self.holding_disk_index:
-                            
-                            addList.append([3, self.holding_disk_index])
-                            delList.append(originTower.index)
-                            originTower.availableDisks[-1].tower = towers[2]
-                        elif not towers[2].getDiskList():
-                            addList.append([3, self.holding_disk_index])
-                            delList.append(originTower.index)     
-                            originTower.availableDisks[-1].tower = towers[2]           
+                            elif not tower.getDiskList():
+                                addList.append([tower_index+1, self.holding_disk_index])
+                                delList.append(originTower.index)
+                                originTower.availableDisks[-1].tower = tower      
             else:
                 pygame.draw.rect(screen, disk.color, (((forthPart*self.index-diskSize//2)+4), (half_height-20-20*i), diskSize, 15), 4)
         if addList and delList:
@@ -262,6 +242,7 @@ class Game:
         self.sorted_moves = []
         self.step_counter = 0
         self.canvas = Canvas()
+        self.exit = False   
     
     def reset_objs(self):
         self.step_counter = 0
@@ -294,7 +275,6 @@ class Game:
         running = True
         while running:
             
-
             if prevDiskNumber != Disk.diskNumber:
                 self.sorted_moves = self.reset_objs()
                 prevDiskNumber = Disk.diskNumber
@@ -326,17 +306,29 @@ class Game:
                     Tower.moveDisks(addList, delList, self.towers, self.disks)
                     self.step_counter += 1
             
+            
+
 
             # Drawing other stuff
             self.canvas.draw_text(f"Step: {self.step_counter}", 36, half_width-25, screen_height-100, YELLOW)
             self.canvas.draw_text("Press R to reset", 36, 25, screen_height-100, YELLOW)
-            self.canvas.draw_text("Press F to auto-mode", 36, 25, screen_height-200, YELLOW)
+            self.canvas.draw_text("Press F to activate algorithm", 36, 25, screen_height-200, YELLOW)
+            self.canvas.draw_text(f"steps expected: {2**(Disk.diskNumber)-1}", 25, 25, screen_height-175, YELLOW)
             Disk.drawDiskButtons(self.canvas.get_canvas())
             self.canvas.draw_text(f"Disk quantity: {Disk.diskNumber}", 36, screen_width-280, screen_height-100, YELLOW)
             Disk.drawDelayButtons(self.canvas.get_canvas())
             self.canvas.showfps(clock, 25, screen_width-100, screen_height-30)
             self.canvas.draw_text(f"Time delay: {Disk.delay/1000}", 36, screen_width-280, screen_height-200, YELLOW)
+            
+            
 
+            if self.exit:
+                self.plane.draw(self.canvas.get_canvas())
+                if self.plane.x > 272 and self.plane.x < 496:
+                    quit_event = pygame.event.Event(pygame.QUIT)
+                    pygame.event.post(quit_event)
+                    
+                self.plane.move()
         
             self.canvas.update()
 
@@ -346,8 +338,8 @@ class Game:
                     running = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        running = False
+                        self.plane = Plane(-Plane.width, (half_height-20-20*Disk.diskNumber - 125) + Disk.diskNumber*10)
+                        self.exit = True
                     if event.key == pygame.K_r:
                         self.sorted_moves = self.reset_objs()
                     if event.key == pygame.K_f:
@@ -363,6 +355,8 @@ class Game:
                     if event.key == pygame.K_LSHIFT:
                         Disk.shiftPressed = False
                     
+
+
             clock.tick(FPS)
 
 class Canvas:
@@ -383,7 +377,7 @@ class Canvas:
         render = font.render(text, 1, color)
 
         self.screen.blit(render, (x,y))
-
+    
     def get_canvas(self):
         return self.screen
 
