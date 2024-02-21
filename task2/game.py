@@ -1,6 +1,5 @@
 import pygame
 from settings import *
-from exit import Plane
 import random
 from pygame.locals import *
 
@@ -242,7 +241,6 @@ class Game:
         self.sorted_moves = []
         self.step_counter = 0
         self.canvas = Canvas()
-        self.exit = False   
     
     def reset_objs(self):
         self.step_counter = 0
@@ -320,18 +318,6 @@ class Game:
             self.canvas.showfps(clock, 25, screen_width-100, screen_height-30)
             self.canvas.draw_text(f"Time delay: {Disk.delay/1000}", 36, screen_width-280, screen_height-200, YELLOW)
             
-            
-
-            if self.exit:
-                forthPart = screen_width//4
-                self.plane.draw(self.canvas.get_canvas())
-                for tower in self.towers:
-                    if tower.availableDisks:
-                        if self.plane.x > (forthPart*(tower.index)-112) and self.plane.x < (forthPart*(tower.index)+112):
-                            quit_event = pygame.event.Event(pygame.QUIT)
-                            pygame.event.post(quit_event)
-                    
-                self.plane.move()
         
             self.canvas.update()
 
@@ -340,9 +326,6 @@ class Game:
                     pygame.quit()
                     running = False
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.plane = Plane(-Plane.width, (half_height-20-20*Disk.diskNumber - 125) + Disk.diskNumber*10)
-                        self.exit = True
                     if event.key == pygame.K_r:
                         self.sorted_moves = self.reset_objs()
                     if event.key == pygame.K_f:

@@ -1,5 +1,5 @@
 # Screen settings
-FPS = 500
+FPS = 200
 screen_width = 1536
 screen_height = 864
 half_width = screen_width // 2
